@@ -30,6 +30,12 @@ var user = User{
 	Password: "PASSWORD",
 }
 
+//Error ...
+type Error struct {
+	Error   bool   `json:"error"`
+	Message string `json:"message"`
+}
+
 //CreateToken ...
 func CreateToken(userid uint64) (string, error) {
 	var err error
@@ -47,12 +53,11 @@ func CreateToken(userid uint64) (string, error) {
 
 //HomePage ...
 func HomePage(c *gin.Context) {
-	fmt.Fprint(c.Writer, "Home Page")
-}
-
-//ErrorPage ...
-func ErrorPage(c *gin.Context) {
-	fmt.Fprint(c.Writer, "ERROR 404")
+	var Error = Error{
+		Error:   false,
+		Message: "Home Page",
+	}
+	c.JSON(http.StatusOK, Error)
 }
 
 //Login ...
@@ -83,13 +88,21 @@ func isAuthorised(endpoint func(c *gin.Context)) gin.HandlerFunc {
 				return mySigningKey, nil
 			})
 			if err != nil {
-				fmt.Fprintf(c.Writer, err.Error())
+				var Error = Error{
+					Error:   true,
+					Message: "Invalid Signature",
+				}
+				c.JSON(http.StatusUnauthorized, Error)
 			}
 			if token.Valid {
 				endpoint(c)
 			}
 		} else {
-			fmt.Fprintf(c.Writer, "No Token Provided")
+			var Error = Error{
+				Error:   true,
+				Message: "No token provided",
+			}
+			c.JSON(http.StatusUnauthorized, Error)
 		}
 	})
 }
