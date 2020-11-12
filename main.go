@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -43,6 +44,16 @@ func CreateToken(userid uint64) (string, error) {
 	return token, nil
 }
 
+//HomePage ...
+func HomePage(c *gin.Context) {
+	fmt.Fprint(c.Writer, "Home Page")
+}
+
+//ErrorPage ...
+func ErrorPage(c *gin.Context) {
+	fmt.Fprint(c.Writer, "ERROR 404")
+}
+
 //Login ...
 func Login(c *gin.Context) {
 	var u User
@@ -61,7 +72,12 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, token)
 }
 
+func isAuthorised() func(c *gin.Context) {
+	return HomePage
+}
+
 func main() {
+	router.GET("/home", isAuthorised())
 	router.POST("/login", Login)
 	log.Fatal(router.Run(":8080"))
 }
