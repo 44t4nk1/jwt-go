@@ -12,7 +12,8 @@ import (
 )
 
 var (
-	router = gin.Default()
+	router       = gin.Default()
+	mySigningKey = []byte(os.Getenv("ACCESS_SECRET"))
 )
 
 //User ...
@@ -72,12 +73,29 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, token)
 }
 
-func isAuthorised() func(c *gin.Context) {
-	return HomePage
+func isAuthorised(endpoint func(c *gin.Context)) gin.HandlerFunc {
+	return gin.HandlerFunc(func(c *gin.Context) {
+		if c.GetHeader("Token") != "" {
+			token, err := jwt.Parse(c.GetHeader("Token"), func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, fmt.Errorf("There was an Error")
+				}
+				return mySigningKey, nil
+			})
+			if err != nil {
+				fmt.Fprintf(c.Writer, err.Error())
+			}
+			if token.Valid {
+				endpoint(c)
+			}
+		} else {
+			fmt.Fprintf(c.Writer, "No Token Provided")
+		}
+	})
 }
 
 func main() {
-	router.GET("/home", isAuthorised())
+	router.GET("/home", isAuthorised(HomePage))
 	router.POST("/login", Login)
 	log.Fatal(router.Run(":8080"))
 }
