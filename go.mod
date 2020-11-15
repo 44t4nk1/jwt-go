@@ -1,4 +1,4 @@
-module jwt-go
+module github.com/44t4nk1/jwt-go
 
 go 1.15
 
