@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	// "github.com/44t4nk1/jwt-go"
+	// "github.com/44t4nk1/jwt-go/api/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -16,13 +16,6 @@ var (
 	router       = gin.Default()
 	mySigningKey = []byte(os.Getenv("ACCESS_SECRET"))
 )
-
-//User ...
-type User struct {
-	ID       uint64 `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
 
 //A sample use
 var user = User{
