@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	// "github.com/44t4nk1/jwt-go/api/models"
+	. "github.com/44t4nk1/jwt-go/api/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 )
@@ -17,17 +17,11 @@ var (
 	mySigningKey = []byte(os.Getenv("ACCESS_SECRET"))
 )
 
-//A sample use
+//A sample user
 var user = User{
 	ID:       1,
 	Username: "44t4nk1",
 	Password: "PASSWORD",
-}
-
-//Response ...
-type Response struct {
-	Error   bool   `json:"error"`
-	Message string `json:"message"`
 }
 
 //CreateToken ...
