@@ -19,6 +19,7 @@ func Login(c *gin.Context) {
 	var u models.User
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, "Invalid JSON Provided")
+		return
 	}
 	if user.Username != u.Username || user.Password != u.Password {
 		c.JSON(http.StatusUnauthorized, "Please provide valid login details")
